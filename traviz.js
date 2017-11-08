@@ -9084,11 +9084,16 @@ TRAViz.prototype.visualize = function(){
 			tiptext += "</tr>";
 		}
 		tiptext += "</table>";
+		occurrences = vertex.sources.length + '&nbsp;' + sal.config.options.popupLabel;
+		vertextoken = '"' + vertex.token + '"';
+		tiptitle = ( sal.config.options.rtl ?
+			'<div>' + occurrences + ' :' + vertextoken + '</div>' :
+			'<div>' + vertextoken + ': ' + occurrences + '</div>' );
 		$(node).qtip({
 			content: {	
 				text: tiptext,
 				title: {
-					text: "<div>\""+vertex.token+"\": "+vertex.sources.length+"&nbsp;"+sal.config.options.popupLabel+"</div>",
+					text: tiptitle,
 					button: 'X'
 				}
 			},
@@ -9390,18 +9395,6 @@ TRAViz.prototype.visualize = function(){
 	}
 	var x_min = false, x_max = false;
 	var y_min = false, y_max = false;
-	if( this.config.options.rtl ){
-		for( var i=0; i<this.layout.length; i++ ){
-			this.layout[i].x1 *= -1;
-			this.layout[i].x2 *= -1;
-		}
-		for( var i=0; i<this.connections.length; i++ ){
-			for( var j=0; j<this.connections[i].links.length; j++ ){
-				this.connections[i].links[j].x1 *= -1;
-				this.connections[i].links[j].x2 *= -1;
-			}			
-		}
-	}
 	for( var i=0; i<this.layout.length; i++ ){
 		var v = this.layout[i];
 		if( !x_min || v.x1 < x_min ){
@@ -9428,6 +9421,22 @@ TRAViz.prototype.visualize = function(){
 	var h = y_max - y_min;
 	if( this.config.options.lineBreaks ){
 		w = $('#'+this.div).width();
+	}
+	if( this.config.options.rtl ){
+		for( var i=0; i<this.layout.length; i++ ){
+			this.layout[i].x1 *= -1;
+			this.layout[i].x2 *= -1;
+			this.layout[i].x1 += w;
+			this.layout[i].x2 += w;
+		}
+		for( var i=0; i<this.connections.length; i++ ){
+			for( var j=0; j<this.connections[i].links.length; j++ ){
+				this.connections[i].links[j].x1 *= -1;
+				this.connections[i].links[j].x2 *= -1;
+				this.connections[i].links[j].x1 += w;
+				this.connections[i].links[j].x2 += w;
+			}			
+		}
 	}
 	this.paper = r;
 	for( var i=0; i<this.layout.length; i++ ){
