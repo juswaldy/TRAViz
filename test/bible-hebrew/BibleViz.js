@@ -11,10 +11,10 @@ var BibleViz = new function(){
 		var biblePos = $("<table class='biblePos'></table>").appendTo(this.container);
 		this.verseData = $("<div class='header'></div>").appendTo(this.container);
 		$(this.verseData).css('height','20px');
-		this.from = $("<div>Gen 21:1</div>").appendTo(this.verseData);
+		this.from = $("<div>" + fromPassage + "</div>").appendTo(this.verseData);
 		$(this.from).css('position','absolute');
 		$(this.from).css('left','100px');
-		this.to = $("<div>Gen 21:1</div>").appendTo(this.verseData);
+		this.to = $("<div>" + toPassage + "</div>").appendTo(this.verseData);
 		$(this.to).css('position','absolute');
 		$(this.to).css('right','150px');
 		this.copyrightInfo = $("<div></div>");
@@ -130,10 +130,10 @@ var BibleViz = new function(){
 			$(alignmentViz).css('padding-left','84px');
 			$(alignmentViz).css('margin-top','10px');
 			var av = new TRAViz("alignment"+i,{
-				connectionType: 'all',
+				connectionType: connectionType,
 				vertexBackground: false,
 				font: 'SBL BibLit',
-				fontSizeMin: 23,
+				fontSizeMin: fontSizeMin,
 				rtl: true
 			});
 			av.align(list);
