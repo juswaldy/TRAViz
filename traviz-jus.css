@@ -1,0 +1,6 @@
+.unlink {
+	width: 23px;
+	height: 16px;
+	background:#FFFFFF url(images/unlink.png) no-repeat;
+	cursor: pointer;
+}
