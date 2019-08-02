@@ -1,54 +1,19 @@
 body {
 	font-family: 'Georgia';
 	margin: 0px;
-}
-
-.topLeft {
-	width: 400px;
-	height: 520px;
-	background-image: url(images/tl.jpg);
+	background-color: #ecd9c6;
 }
 
 .top {
 	display: block;
-	height: 520px;
-	background-image: url(images/t.jpg);
+	height: 2em;
+	background-color: black;
 }
 
-.topRight {
+.topLeft, .topRight {
 	width: 400px;
-	height: 520px;
-	background-image: url(images/tr.jpg);
-}
-
-.bottomLeft {
-	width: 400px;
-	height: 499px;
-	background-image: url(images/bl.jpg);
-}
-
-.bottom {
-	display: block;
-	height: 499px;
-	background-image: url(images/b.jpg);
-}
-
-.bottomRight {
-	width: 400px;
-	height: 499px;
-	background-image: url(images/br.jpg);
-}
-
-.left {
-	background-image: url(images/l.jpg);
-}
-
-.center {
-	background-image: url(images/c.jpg);
-}
-
-.right {
-	background-image: url(images/r.jpg);
+	height: 2em;
+	background-color: black;
 }
 
 .bibleBg {
