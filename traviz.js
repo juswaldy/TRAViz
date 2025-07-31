@@ -9568,7 +9568,7 @@ function TRAVizConfig(options) {
 	this.options = {
 
 		/* General */
-		colors: [ "red", "blue", "green", "rgb(230,230,0)", "orange",
+		colors: [ "red", "blue", "green", "#DAC520", "orange",
                       "#996600", "purple", "#FF00FF", "#66FFFF", "#339999" ], // colors used to identify the various edition flows		
 		normalize: true, // if the sentences shall be normalized or not (remove special characters)
 		lineBreaks: true, // if line breaks are allowed or not (if true, only the width of the given div is used)
