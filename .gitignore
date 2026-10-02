@@ -1,0 +1,27 @@
+# Dependencies and generated app output
+node_modules/
+/app/dist/
+/app/coverage/
+/app/playwright-report/
+/app/test-results/
+
+# Local configuration; commit templates only
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Runtime data and backups (not scholarly test fixtures)
+/app/data/
+/app/backups/
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+
+# Local tooling
+__pycache__/
+.DS_Store
+*.log
