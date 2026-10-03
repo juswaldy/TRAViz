@@ -52,6 +52,7 @@ function TRAVizConfig(options) {
 		colors: [ "red", "blue", "green", "rgb(230,230,0)", "orange",
                       "#996600", "purple", "#FF00FF", "#66FFFF", "#339999" ], // colors used to identify the various edition flows		
 		normalize: true, // if the sentences shall be normalized or not (remove special characters)
+		plainText: false, // treat input literally; disable legacy HTML and merge-marker parsing
 		lineBreaks: true, // if line breaks are allowed or not (if true, only the width of the given div is used)
 		lineNumbering: true, // if line numbers are shown when lineBreaks are used
 		lineNumberingText: "Line ", // text of line numbers

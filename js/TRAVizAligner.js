@@ -53,7 +53,12 @@ function TRAVizAligner(graph,config){
  * normalizes the given <sentence> if configured; otherwise, only multiple whitespaces are removed
  */
 TRAVizAligner.prototype.normalize = function(sentence){
-	sentence = $("<p>"+sentence+"</p>").text();
+	if( this.config.options.plainText ){
+		sentence = sentence.replace(/\s+/g, " ").trim();
+	}
+	else {
+		sentence = $("<p>"+sentence+"</p>").text();
+	}
 	if( this.config.options.normalize ){
 		sentence = sentence.toLowerCase();
 		sentence = sentence.replace(/--/g, "");
@@ -102,7 +107,7 @@ TRAVizAligner.prototype.alignSentences = function(sentences){
 			var token = tokens[j];
 			var contentToken = tokens[j];
 			var id = false;
-			if( token.indexOf("<>") != -1 ){
+			if( !this.config.options.plainText && token.indexOf("<>") != -1 ){
 				id = token.substring(1,token.indexOf('>'));
 				contentToken = token.substring(token.indexOf('>')+1);
 				contentToken = contentToken.substring(0,contentToken.indexOf('<'));

@@ -63,11 +63,13 @@ function TRAViz(div,options){
  */
 TRAViz.prototype.align = function(sources){
 	this.editions = [];
+	this.editionLabels = {};
 	this.sentences = [];
 	this.colorMap = [];
 	var colors = this.config.getColors(sources.length);
 	for( var i=0; i<sources.length; i++ ){
 		this.editions.push(sources[i].edition);
+		this.editionLabels[sources[i].edition] = typeof sources[i].label == 'string' ? sources[i].label : sources[i].edition;
 		this.sentences.push(sources[i].text);
 		this.colorMap[sources[i].edition] = colors[i];
 	}
@@ -428,14 +430,22 @@ TRAViz.prototype.addEdgeToGroup = function(h,t,e,ids){
 }
 
 /**
- * Adds the given edge <e={h,t}> to its corresponding group
+ * Escapes literal labels and tokens inserted into legacy tooltip markup.
  */
+TRAViz.escapeHTML = function(value){
+	return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+};
+
+TRAViz.prototype.getEditionLabel = function(edition){
+	return this.editionLabels && Object.prototype.hasOwnProperty.call(this.editionLabels, edition) ? this.editionLabels[edition] : edition;
+};
+
 TRAViz.prototype.computeEdgeLabels = function(){
 	for( var i=0; i<this.edgeGroups.length; i++ ){
 		var g = this.edgeGroups[i];
 		var tiptext = "";
 		for( var j=0; j<g.ids.length; j++ ){
-			tiptext += "<div style='text-align:center;color:"+this.colorMap[this.editions[g.ids[j]]]+";'>"+this.editions[g.ids[j]]+"</div>";
+			tiptext += "<div style='text-align:center;color:"+TRAViz.escapeHTML(this.colorMap[this.editions[g.ids[j]]])+";'>"+TRAViz.escapeHTML(this.getEditionLabel(this.editions[g.ids[j]]))+"</div>";
 		}
 		for( var j=0; j<g.edges.length; j++ ){
 			$(g.edges[j].node).qtip({
@@ -1425,23 +1435,16 @@ TRAViz.prototype.displayVertexConnections = function(node,vertex){
 				}
 				var pvis = this.paper.path(path).attr({stroke: this.colorMap[this.editions[i]], "stroke-width": 3, "stroke-linecap": "round", "opacity": "0.8"});
 				pvis.node.setAttribute("class","edition"+i+"-edgestyle");
+				// Keep hovered text nodes in place. Reparenting them between pointer
+				// and mouse events can cancel native clicks in modern browsers.
+				pvis.toBack();
 				this.vertexConnections.push(pvis);
 				break;
 			}
 		}
 	}
-	for( var i=0; i<this.vertices.length; i++ ){
-		var v = this.vertices[i];
-		if( v == this.startVertex || v == this.endVertex || v.token == '' ){
-			continue;
-		}
-		if( this.config.options.vertexBackground ){
-			v.rect.toFront();
-		}
-		if( v.count > this.config.options.collapseLabels ){
-			v.textNode.toFront();
-		}
-	}
+	// Highlight paths are behind the existing vertices; moving vertices to the
+	// front here would detach the current event target.
 };
 
 /**
@@ -2268,8 +2271,8 @@ TRAViz.prototype.visualize = function(){
 		tiptext += "<tr><th style='padding:5px;text-align:right;'>edition</th><th style='padding:5px;text-align:right;'>token</th></tr>";
 		for( var i=0; i<vertex.sources.length; i++ ){
 			tiptext += "<tr>";
-			tiptext += "<td style='padding:5px;text-align:right;color:"+sal.colorMap[sal.editions[vertex.sources[i].sourceId]]+";'>"+sal.editions[vertex.sources[i].sourceId]+"</td>";
-			tiptext += "<td style='padding:5px;text-align:left;color:"+sal.colorMap[sal.editions[vertex.sources[i].sourceId]]+";'>"+vertex.sources[i].token+"</td>";
+			tiptext += "<td style='padding:5px;text-align:right;color:"+TRAViz.escapeHTML(sal.colorMap[sal.editions[vertex.sources[i].sourceId]])+";'>"+TRAViz.escapeHTML(sal.getEditionLabel(sal.editions[vertex.sources[i].sourceId]))+"</td>";
+			tiptext += "<td style='padding:5px;text-align:left;color:"+TRAViz.escapeHTML(sal.colorMap[sal.editions[vertex.sources[i].sourceId]])+";'>"+TRAViz.escapeHTML(vertex.sources[i].token)+"</td>";
 			if( sal.config.options.splitAndMerge && vertex.sources.length > 1 ){
 				tiptext += "<td><div title='Remove token and create new branch!' name="+vertex.sources[i].sourceId+" class='unlink unlink"+vertex.index+"'/></td>";
 			}
@@ -2280,7 +2283,7 @@ TRAViz.prototype.visualize = function(){
 			content: {	
 				text: tiptext,
 				title: {
-					text: "<div>\""+vertex.token+"\": "+vertex.sources.length+"&nbsp;"+sal.config.options.popupLabel+"</div>",
+					text: "<div>\""+TRAViz.escapeHTML(vertex.token)+"\": "+vertex.sources.length+"&nbsp;"+TRAViz.escapeHTML(sal.config.options.popupLabel)+"</div>",
 					button: 'X'
 				}
 			},
@@ -2304,6 +2307,13 @@ TRAViz.prototype.visualize = function(){
 			api: {
 				onShow: function(){
 					$("[qtip='"+this.id+"']").addClass('trailsQtip');
+					if( sal.config.options.plainText ){
+						// qTip 1 can calculate negative offsets for SVG text. Keep the
+						// popup inside the local preview's horizontal viewport.
+						var tip = this.elements.tooltip;
+						var left = parseFloat(tip.css('left')) || 0;
+						tip.css('left', Math.max(12, Math.min(left, $(window).width() - tip.outerWidth() - 12)));
+					}
 					$("[qtip='"+this.id+"']").mouseenter(function(){
 						showConnections();
 					});
@@ -2356,7 +2366,7 @@ TRAViz.prototype.visualize = function(){
 			if( this.config.options.interpolateFontSize ){
 				fs = this.config.options.fontSizeMin + (v.count-1)/(maxLabel-1) * (this.config.options.fontSizeMax - this.config.options.fontSizeMin);
 			}
-			$(helperDiv).html(v.token);
+			$(helperDiv).text(v.token);
 			$(helperDiv).css("font",fs+"px "+this.config.options.font);
 			v.x1 = x;
 			if( v.count <= this.config.options.collapseLabels ){
