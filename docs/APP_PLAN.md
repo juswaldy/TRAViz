@@ -1,10 +1,39 @@
 # TRAViz parallel text app plan
 
-Status: repository setup and planning, 2026-10-02. The app is not implemented.
+Status: first implementation on `feat/parallel-text-app`, 2026-10-02.
 
 Build a local research workspace where one user can enter or look up passages,
 arrange their textual parallels, preview TRAViz alignments, and reopen the work
 from a backend database. Existing examples remain available throughout the work.
+
+## Implementation progress
+
+- Repository instructions and three workflow skills are committed.
+- The React/Vite app, Fastify API, numbered SQLite migrations, and source-based
+  TRAViz asset build are implemented in `app/`.
+- The initial workflow supports manual row/whole-passage entry, reviewed line
+  splitting with original snapshots, source/row ordering, RTL/settings controls,
+  a selected-row preview, and create/read/update/delete with revision checks.
+- Database restart fidelity, transaction rollback, schema validation, stale writes,
+  and splitting are covered by automated tests. Browser checks exercise the
+  production assets and editor flows; commands are in [app setup](../app/README.md).
+- Remaining: offline corpus installation/lookup, full legacy import, JSON
+  interchange, duplication, richer library search/pagination, backup tooling,
+  row regrouping/recombination, and broader performance/accessibility verification.
+
+Verified for this first slice: production build/typecheck, four database/API/model
+tests, and three Chromium browser workflows pass. Browser coverage includes
+save/reopen, stale-tab conflicts, failed-save draft retention, line splitting,
+Hebrew/Greek/English fixtures, literal markup in tokens/tooltips, and narrow layout.
+
+Implementation decisions: use Node 24's built-in SQLite driver; normalized tables
+for comparisons/sources/rows/cells; isolated preview frames with a plain-text engine
+mode; deterministic app asset generation rather than the legacy append-based Rake
+compression task. Hover highlights now move behind existing text instead of
+reparenting the hovered text node, preserving native tooltip clicks. The initial
+preview displays one chosen row and limits it to
+600 words across visible sources. Search currently filters the latest 200 titles;
+the richer library/API search remains planned.
 
 ## Confirmed requirements
 
@@ -114,7 +143,7 @@ and a completeness report, so “offline” does not depend on a hidden online A
 
 ## Architecture
 
-Proposed layout, to be created during implementation:
+Layout introduced by the first implementation (collection scripts remain planned):
 
 ```text
 app/
@@ -227,7 +256,9 @@ and upstream attribution while doing so.
 
 ## Implementation milestones
 
-Each step below is planned, not completed.
+Milestones 1 and 2 have an initial implementation. Milestone 3 is partially
+implemented; milestones 4–6 remain. The descriptions below define the target scope
+and checks, with the current working subset recorded above.
 
 1. **App scaffold and renderer proof.** Add the app package, compatible pinned
    tooling, commands, and adapter. Resolve HTML insertion paths and the asset build.

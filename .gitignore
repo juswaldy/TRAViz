@@ -4,6 +4,7 @@ node_modules/
 /app/coverage/
 /app/playwright-report/
 /app/test-results/
+/app/public/generated/
 
 # Local configuration; commit templates only
 .env

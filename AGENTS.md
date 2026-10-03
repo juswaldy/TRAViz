@@ -8,8 +8,8 @@ whole-passage entry, optional splitting into rows, and offline Bible collection
 lookup belong in the first version. Use React/TypeScript, Node, and SQLite. Read
 [the app plan](docs/APP_PLAN.md) before implementation; it distinguishes confirmed
 requirements from proposals.
-The initial setup request covers instructions, skills, and planning. Implement app
-features when requested, and update the plan as decisions and milestones change.
+The app is now in active implementation. Update the plan as decisions and
+milestones change; distinguish the working first slice from remaining features.
 
 ## Repository map
 
@@ -22,7 +22,9 @@ features when requested, and update the plan as decisions and milestones change.
 - `index.html`: existing demo index. Keep its links working.
 - `docs/`: app plan and evidence about the existing data.
 - `skills/`: repository workflow skills routed below.
-- `app/`: proposed home of the new app; not scaffolded yet.
+- `app/`: React/Vite client, Fastify API, SQLite migrations, and automated tests.
+- `app/scripts/build-assets.mjs`: reproducible app bundle from `js/` and `lib/`;
+  output in ignored `app/public/generated/`. The app does not load root bundles.
 
 ## Repository skills
 
@@ -66,10 +68,21 @@ To serve existing demos from the repository root:
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Open `http://127.0.0.1:8000/`. No app package manifest or automated test command
-exists at initialization; do not claim `npm test` or a backend is available.
-When scaffolding the app, document actual install, dev, build, migration, and test
-commands in its README and update this section.
+Open `http://127.0.0.1:8000/` for legacy demos. For the new app, use Node 24.14+
+within the Node 24 series and run from `app/`:
+
+```sh
+npm ci
+npm run dev
+npm test
+npm run build
+npm run test:browser
+```
+
+Development uses `http://127.0.0.1:5173`; after building, `npm start` serves the app
+at `http://127.0.0.1:3001`. Migrations run automatically at server startup. Browser
+tests require installed Playwright Chromium and port 3001. See [app setup](app/README.md)
+for browser installation, database location, backup, and test details.
 
 For app work, verify the affected behavior: Unicode and missing-cell round trips,
 atomic saves and restart persistence, row/source reordering, stale-save handling,

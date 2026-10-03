@@ -1,8 +1,8 @@
 # Existing TRAViz data and integration notes
 
-The current repo is a browser library and a collection of static demos. There is
-no backend, package manifest, database, or automated test suite. These notes record
-the evidence behind the proposed app model; the app is not implemented yet.
+The original repo is a browser library and a collection of static demos. These
+notes describe that legacy code and the evidence behind the app model. The new
+backend, database schema, and automated tests now live in [app/](../app/README.md).
 
 ## Representative examples
 
@@ -50,15 +50,17 @@ keys or adapter validation rather than relying on labels as database IDs.
 
 [Configuration](../js/TRAVizConfig.js) includes `normalize`, `rtl`, `lineBreaks`,
 `connectionType`, and `splitAndMerge`. The default is `normalize: true`.
-[Normalization](../js/TRAVizAligner.js) first parses the sentence through jQuery
-HTML, then optionally lowercases and removes selected punctuation; whitespace is
-also transformed. Turning normalization off does not make this path plain text.
+[Normalization](../js/TRAVizAligner.js) historically parsed the sentence through
+jQuery HTML, then optionally lowercased and removed selected punctuation. The app
+now enables `plainText: true`, which bypasses HTML and legacy merge-marker parsing.
+Whitespace changes occur only on derived renderer input. Legacy default behavior
+is retained for existing callers unless they enable the new option.
 
-`js/TRAViz.js` also inserts token text through `.html()` and constructs tooltip
-HTML from edition labels and tokens. A new app must handle each affected sink;
-escaping only its form inputs or only the first normalization call is insufficient.
-Preserve stored text while making rendering safe and verify literal markup in a
-browser. A React wrapper by itself does not fix the legacy renderer's HTML sinks.
+The app integration changes token measurement to `.text()` and escapes tooltip
+labels/tokens in `js/TRAViz.js`. It also separates edition keys from display labels.
+Browser tests exercise literal markup in the generated production assets. Future
+renderer changes must retain these boundaries; a React wrapper alone does not
+make HTML insertion in a legacy renderer safe.
 
 Graph node positions and IDs are derived output. Persist source text, row grouping,
 and selected settings first. If persistent manual word merges/splits are requested,

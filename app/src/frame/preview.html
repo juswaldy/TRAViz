@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text alignment preview</title>
+  <link rel="stylesheet" href="traviz.css" />
+  <style>
+    body { margin: 0; padding: 24px 12px; color: #243a35; background: #fff; font: 17px Georgia, serif; }
+    #graph { min-height: 130px; }
+    #message { white-space: pre-wrap; line-height: 1.7; }
+    .TRAViz-copyright-link { margin-top: 12px; float: none; display: block; width: 232px; }
+    .qtip { max-width: calc(100vw - 24px); overflow-wrap: anywhere; }
+    .qtip table { table-layout: fixed; width: 100%; }
+  </style>
+  <script src="traviz.js"></script>
+  <script src="preview.js" defer></script>
+</head>
+<body><div id="message" role="status"></div><div id="graph"></div></body>
+</html>

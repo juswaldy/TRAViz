@@ -27,11 +27,22 @@ http://www.traviz.vizcovery.org/
 
 ## Parallel text app
 
-This repository is being prepared for a local, single-user app for entering and
-keeping textual parallels in a backend, with both row editing and whole-passage
-entry plus offline Hebrew Bible, Greek NT, and LXX lookup. The selected stack is
-React/TypeScript, Node, and SQLite. The app is planned; the current runnable code
-is the original demos.
+The first local, single-user app implementation is in [app/](app/README.md).
+It provides row and whole-passage editing, a TRAViz preview, and SQLite save/reopen
+through a Node backend. Offline Hebrew Bible, Greek NT, and LXX lookup remains a
+planned milestone. The stack is React/TypeScript, Node, and SQLite.
+
+With Node 24.14+ within the Node 24 series:
+
+```sh
+cd app
+npm ci
+npm run build
+npm start
+```
+
+Open <http://127.0.0.1:3001>. See [app setup and verification](app/README.md) for
+development, tests, data storage, and current limitations.
 
 - [App plan and open decisions](docs/APP_PLAN.md)
 - [Existing examples and data model evidence](docs/EXISTING_DATA.md)
